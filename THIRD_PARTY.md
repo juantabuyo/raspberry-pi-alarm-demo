@@ -5,6 +5,9 @@ a Raspberry Pi port of [Mike Causer's MicroPython driver](https://github.com/mca
 This is third-party integration/adaptation, not an original student driver.
 
 The [MIT licence](LICENSES/TM1637-MIT.txt) retains **Copyright (c) 2016-2018 Mike Causer**.
+The retained notice matches the upstream project's
+[LICENSE.txt](https://github.com/depklyon/raspberrypi-tm1637/blob/master/LICENSE.txt)
+byte-for-byte (Git blob `cc3ad65c85534bdba0075767d38fdeea44498eef`).
 The notice is also present in the official
 [PyPI 1.3.7 distribution](https://pypi.org/project/raspberrypi-tm1637/1.3.7/).
 That wheel is not bundled or required at runtime.

@@ -1,9 +1,16 @@
-# Raspberry Pi alarm demo
+# Raspberry Pi Alarm Controller
 
 An electronics coursework prototype combining three sensor inputs, a five-state
 controller, a two-digit PIN, an RGB LED, a buzzer and a four-digit display.
 Telegram notifications are optional and disabled by default. The local demo
 exercises the controller without requiring a Raspberry Pi.
+
+![Seven state entries recorded from the controller with simulated GPIO and a manually advanced clock](docs/assets/simulated-state-trace.svg)
+
+The trace above comes from a local execution of the controller. It shows the
+arming delay, a triggered sensor, the prealarm and alarm, automatic rearming,
+and a correct PIN returning the controller to the disarmed state. All times are
+simulated; physical hardware and notification delivery have not been validated.
 
 ## Run the local demo
 
@@ -15,6 +22,10 @@ python main.py --simulate
 python simulate.py --json results/simulated_run.json
 python -m unittest discover -s tests -v
 ```
+
+Reproduce the trace image with `python tools/render_simulation.py`. The renderer
+calls the existing simulator and records its state and display outputs; it needs
+only the standard library.
 
 Simulation substitutes GPIO interfaces, advances the clock explicitly and always
 disables Telegram. It uses actual controller functions and a fictitious PIN of
