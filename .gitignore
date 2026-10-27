@@ -9,3 +9,6 @@ venv/
 .DS_Store
 __MACOSX/
 ._*
+
+# Separate local simulation output.
+demo-output/

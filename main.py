@@ -7,6 +7,7 @@ machine whose entire output depends only on one of five state labels.
 import argparse
 from enum import Enum, auto
 import importlib
+import sys
 from time import monotonic, sleep
 
 
@@ -142,9 +143,26 @@ def step(now=None):
 
 
 def cleanup():
-    """Release outputs and gpiozero inputs, including after an interrupted loop."""
-    for module in (buzzer, rgb_led, display, buttons, infrared, microphone, ultrasonic):
-        module.cleanup()
+    """Release outputs and gpiozero inputs, including after an interrupted loop.
+
+    Components that were never loaded, because startup failed part-way, are
+    skipped. A failing cleanup does not stop the others: every loaded component
+    is tried, the first failure is raised afterwards and any further ones are
+    reported on stderr.
+    """
+    failures = []
+    for name in ('buzzer', 'rgb_led', 'display', 'buttons', 'infrared', 'microphone', 'ultrasonic'):
+        module = globals().get(name)
+        if module is None:
+            continue
+        try:
+            module.cleanup()
+        except Exception as error:
+            failures.append((name, error))
+    for name, error in failures[1:]:
+        print(f'[FSM] Cleanup of {name} also failed: {error!r}', file=sys.stderr)
+    if failures:
+        raise failures[0][1]
 
 
 def main():
@@ -160,10 +178,10 @@ def main():
         from simulate import run_demo
         run_demo()
         return
-    load_components(simulated=False, enable_telegram=args.enable_telegram)
-    print('Raspberry Pi alarm demo')
-    print('BCM16/17: digits 0–9; BCM19: confirm. Ctrl+C to stop.')
     try:
+        load_components(simulated=False, enable_telegram=args.enable_telegram)
+        print('Raspberry Pi alarm demo')
+        print('BCM16/17: digits 0–9; BCM19: confirm. Ctrl+C to stop.')
         enter_state(State.DISARMED)
         while True:
             step()
@@ -171,7 +189,14 @@ def main():
     except KeyboardInterrupt:
         print('\n[FSM] Stopped by the user.')
     finally:
-        cleanup()
+        failure = sys.exc_info()[1]  # a startup or loop error that is still propagating
+        try:
+            cleanup()
+        except Exception as error:
+            if failure is None:
+                raise
+            # Keep the original error as the main one; the cleanup failure is only reported.
+            print(f'[FSM] Cleanup failed while handling {type(failure).__name__}: {error!r}', file=sys.stderr)
 
 
 if __name__ == '__main__':

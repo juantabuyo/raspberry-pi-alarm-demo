@@ -7,7 +7,10 @@ timing, sound and Telegram delivery remain unverified.
 
 ## Requirements and connections
 
-Python 3.12; tested with 3.12.14 for the local simulation. The Pi dependencies are
+The local simulation and all 14 tests passed with Python 3.12.2 on macOS and
+Python 3.12.14. The isolated environments used pip 26.2.2; the simulation needs
+no third-party packages. These checks do not validate Pi hardware support.
+The Pi dependencies are
 `gpiozero` and `RPi.GPIO`, listed separately in `../requirements-pi.txt`. Their
 installation and versions have not been checked on a Pi.
 
@@ -34,13 +37,27 @@ conditioning. No measured sensitivity or false-alarm rate is available.
 From the project folder, in your Python environment:
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
 python -m pip install -r requirements-pi.txt
 python main.py --hardware
 ```
 
 Hardware mode has no simulation fallback. A missing package or inaccessible
 device prevents hardware operation. Use BCM16/17 to enter the two-digit PIN and
-BCM19 to confirm. Ctrl+C stops the loop and releases the inputs and outputs.
+BCM19 to confirm. Ctrl+C stops the loop and releases the inputs and outputs. The
+same release runs if initialisation fails part-way: components already loaded are
+released, those not yet loaded are skipped, and the original error is still the one
+reported. Every loaded component is tried even when one cleanup fails; the first
+such failure is raised after a normal stop, and when another error is already
+propagating, the cleanup failure is only printed to stderr.
+
+This cannot release what a component module had opened before its own import
+failed (for example a first input created before a second one raised), because the
+controller never receives that module. It is exercised only with the GPIO doubles,
+not on a Pi. After any failed start, check the wiring and stop the process before
+retrying.
 
 The sensor priority is IR, microphone, then ultrasound; only the first active
 threshold is recorded. Arming averages three consecutive ultrasonic readings
