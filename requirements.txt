@@ -1,0 +1,2 @@
+# Simulation and tests use the Python standard library only.
+# Raspberry Pi dependencies are listed separately in requirements-pi.txt.

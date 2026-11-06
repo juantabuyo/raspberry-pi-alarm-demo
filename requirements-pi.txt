@@ -1,0 +1,3 @@
+# Hardware dependencies inferred from imports; not installed or tested on a Pi.
+gpiozero
+RPi.GPIO

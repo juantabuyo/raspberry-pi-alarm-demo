@@ -1,0 +1,64 @@
+{
+  "kind": "simulated peripherals and clock; no physical or network validation",
+  "states": [
+    {
+      "time_seconds": 0.0,
+      "state": "DISARMED",
+      "display": [
+        "text",
+        "    "
+      ]
+    },
+    {
+      "time_seconds": 0.0,
+      "state": "EXIT_DELAY",
+      "display": [
+        "number",
+        15
+      ]
+    },
+    {
+      "time_seconds": 15.0,
+      "state": "ARMED",
+      "display": [
+        "text",
+        "----"
+      ]
+    },
+    {
+      "time_seconds": 15.0,
+      "state": "PREALARM",
+      "display": [
+        "number",
+        10
+      ]
+    },
+    {
+      "time_seconds": 25.0,
+      "state": "ALARM",
+      "display": [
+        "text",
+        "    "
+      ]
+    },
+    {
+      "time_seconds": 85.0,
+      "state": "ARMED",
+      "display": [
+        "text",
+        "----"
+      ]
+    },
+    {
+      "time_seconds": 85.0,
+      "state": "DISARMED",
+      "display": [
+        "text",
+        "    "
+      ]
+    }
+  ],
+  "armed_displays_correct": true,
+  "final_state": "DISARMED",
+  "telegram_enabled": false
+}
